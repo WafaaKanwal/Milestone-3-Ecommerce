@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const products = [
   {
@@ -194,10 +195,16 @@ const products = [
   }
 ];
 
-export async function GET(request: Request, context: { params: { id: string } }) {
-  const { id } = context.params;
-  const product = products.find(p => p.id === id);
-  
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const productId = searchParams.get('id');
+
+  if (!productId) {
+    return new NextResponse('Product ID is required', { status: 400 });
+  }
+
+  const product = products.find(p => p.id === productId);
+
   if (!product) {
     return new NextResponse('Product not found', { status: 404 });
   }
