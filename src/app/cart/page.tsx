@@ -1,6 +1,8 @@
 // app/cart/page.tsx
 'use client';
 
+import Image from 'next/image';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -66,9 +68,11 @@ export default function CartPage() {
                     <li key={item.id} className="py-6 flex flex-col sm:flex-row sm:items-center">
                       {/* Product Image */}
                       <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
-                        <img
+                        <Image
                           src={item.imageUrl}
                           alt={item.name}
+                          width={1920} // Set the width of the image
+                          height={1080} // Set the height of the image
                           className="w-full h-full object-cover object-center"
                         />
                       </div>
