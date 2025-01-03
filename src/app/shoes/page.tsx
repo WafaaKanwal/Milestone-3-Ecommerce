@@ -26,7 +26,6 @@ async function getProducts(): Promise<Shoe[]> {
 export default function ShoesPage() {
   const [shoes, setShoes] = useState<Shoe[]>([]); // Use the Shoe interface
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Fetch products
   useEffect(() => {
@@ -35,8 +34,8 @@ export default function ShoesPage() {
         const products = await getProducts();
         const shoes = products.filter((product) => product.category === 'shoes');
         setShoes(shoes);
-      } catch (err) {
-        setError('Failed to fetch products');
+      } catch {
+        // You can handle errors here if necessary
       } finally {
         setLoading(false);
       }
@@ -49,19 +48,6 @@ export default function ShoesPage() {
     return (
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
         <p className="text-gray-700">Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">{error}</h1>
-          <Link href="/" className="mt-4 text-indigo-600 hover:text-indigo-500 font-medium">
-            ← Back to Home
-          </Link>
-        </div>
       </div>
     );
   }
