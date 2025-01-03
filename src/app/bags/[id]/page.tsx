@@ -48,6 +48,7 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
         }
       } catch (err) {
         setError('Failed to fetch product details');
+        console.error('Error fetching product details:', err);  // Log the error to the console
       } finally {
         setLoading(false);
       }
