@@ -194,8 +194,9 @@ const products = [
   }
 ];
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const product = products.find(p => p.id === params.id);
+export async function GET(request: Request, context: { params: { id: string } }) {
+  const { id } = context.params;
+  const product = products.find(p => p.id === id);
   
   if (!product) {
     return new NextResponse('Product not found', { status: 404 });
@@ -203,4 +204,3 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   return NextResponse.json(product);
 }
-
