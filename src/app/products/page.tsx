@@ -1,7 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-async function getProducts() {
+// Define the Product interface
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+}
+
+// Function to fetch products
+async function getProducts(): Promise<Product[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error('Failed to fetch products');
@@ -17,7 +26,7 @@ export default async function ProductsPage() {
       <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-8">Our Products</h1>
         <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {products.map((product: any) => (
+          {products.map((product: Product) => ( // Use the Product interface
             <Link href={`/products/${product.id}`} key={product.id} className="group">
               <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
                 <Image
