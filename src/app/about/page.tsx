@@ -1,14 +1,17 @@
+import Image from "next/image";
 export default function AboutPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
       <div className="relative bg-gray-900">
         <div className="absolute inset-0 overflow-hidden">
-          <img
-            src="/about-hero.jpg" // Replace with your hero image
-            alt="StepStyle Hero"
-            className="w-full h-full object-cover opacity-50"
-          />
+        <Image
+  src="/about-hero.jpg" // Replace with your hero image
+  alt="StepStyle Hero"
+  width={1920} // Set the width of the image
+  height={1080} // Set the height of the image
+  className="w-full h-full object-cover opacity-50"
+/>
         </div>
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl">
@@ -25,9 +28,11 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column: Image */}
           <div className="w-full h-96 lg:h-auto rounded-lg overflow-hidden">
-            <img
+            <Image
               src="/team.jpg" // Replace with your about image
               alt="StepStyle Team"
+              width={1920} // Set the width of the image
+              height={1080} // Set the height of the image
               className="w-full h-full object-cover"
             />
           </div>
@@ -38,13 +43,13 @@ export default function AboutPage() {
               Our Story
             </h2>
             <p className="mb-6">
-              Welcome to <span className="font-semibold text-gray-900">StepStyle</span>, your number one source for all things footwear and bags. We're dedicated to providing you the very best of fashion accessories, with an emphasis on quality, style, and comfort.
+              Welcome to <span className="font-semibold text-gray-900">StepStyle</span>, your number one source for all things footwear and bags. We are dedicated to providing you the very best of fashion accessories, with an emphasis on quality, style, and comfort.
             </p>
             <p className="mb-6">
               Founded in 2023 by fashion enthusiasts, <span className="font-semibold text-gray-900">StepStyle</span> has come a long way from its beginnings in a small studio. When we first started out, our passion for stylish and comfortable footwear drove us to quit our day jobs, do tons of research, and turn our passion into a booming online store.
             </p>
             <p className="mb-6">
-              We now serve customers all over the world, and are thrilled to be a part of the eco-friendly, fair trade wing of the fashion industry. We hope you enjoy our products as much as we enjoy offering them to you. If you have any questions or comments, please don't hesitate to contact us.
+              We now serve customers all over the world, and are thrilled to be a part of the eco-friendly, fair trade wing of the fashion industry. We hope you enjoy our products as much as we enjoy offering them to you. If you have any questions or comments, please do not hesitate to contact us.
             </p>
             <p className="mb-6">
               Sincerely,<br />
