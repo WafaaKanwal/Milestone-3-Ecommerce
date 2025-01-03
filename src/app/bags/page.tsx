@@ -1,9 +1,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
 
-async function getProducts() {
+interface Product {
+  id: string;
+  imageUrl: string | StaticImport;
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+}
+
+async function getProducts(): Promise<Product[]> {
   const res = await fetch('http://localhost:3000/api/products'); // Adjust the URL if needed
   if (!res.ok) {
     throw new Error('Failed to fetch products');
@@ -13,7 +21,7 @@ async function getProducts() {
 
 export default async function BagsPage() {
   const products = await getProducts();
-  const bags = products.filter((product: { category: string; }) => product.category === 'bags');
+  const bags = products.filter((product) => product.category === 'bags');
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -23,13 +31,13 @@ export default async function BagsPage() {
           <p className="mt-4 text-lg text-gray-600">Explore our premium collection of bags, designed for style and functionality.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {bags.map((bag: { id: Key | null | undefined; imageUrl: string | StaticImport; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; price: number; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }) => (
+          {bags.map((bag) => (
             <div key={bag.id} className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all hover:scale-105 hover:shadow-xl">
               {/* Product Image */}
               <div className="w-full h-64 relative">
                 <Image
                   src={bag.imageUrl}
-                  alt={'bag'}
+                  alt={bag.name}
                   fill
                   className="object-cover"
                 />
