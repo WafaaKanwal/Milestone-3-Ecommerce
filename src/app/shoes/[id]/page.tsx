@@ -6,9 +6,20 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { use } from 'react'; // Import the `use` function
 
+// Define the Shoe interface
+interface Shoe {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  description: string;
+  colors: string[];
+  sizes: string[];
+}
+
 // Function to fetch product details
-async function getProduct(id: string) {
-  const res = await fetch(`http://localhost:3000/api/products`); // Fetch all products
+async function getProduct(id: string): Promise<Shoe | undefined> {
+  const res = await fetch(`http://localhost:3000/api/products`);
   if (!res.ok) {
     throw new Error('Failed to fetch product');
   }
@@ -17,7 +28,7 @@ async function getProduct(id: string) {
 }
 
 export default function ShoeDetails({ params }: { params: Promise<{ id: string }> }) {
-  const [shoe, setShoe] = useState<any>(null);
+  const [shoe, setShoe] = useState<Shoe | null>(null); // Use the Shoe interface
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +48,7 @@ export default function ShoeDetails({ params }: { params: Promise<{ id: string }
           setShoe(product);
         }
       } catch (err) {
+        console.error('Failed to fetch product details:', err); // Log the error
         setError('Failed to fetch product details');
       } finally {
         setLoading(false);
@@ -49,29 +61,34 @@ export default function ShoeDetails({ params }: { params: Promise<{ id: string }
   const addToCart = () => {
     if (!shoe) return; // Ensure the product is available
 
-    // Get the current cart from localStorage
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    try {
+      // Get the current cart from localStorage
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    // Check if the product is already in the cart
-    const existingItem = cart.find((item: { id: string }) => item.id === shoe.id);
+      // Check if the product is already in the cart
+      const existingItem = cart.find((item: { id: string }) => item.id === shoe.id);
 
-    if (existingItem) {
-      // If the product is already in the cart, increase its quantity
-      existingItem.quantity += quantity;
-    } else {
-      // If the product is not in the cart, add it with the selected quantity
-      cart.push({ ...shoe, quantity });
+      if (existingItem) {
+        // If the product is already in the cart, increase its quantity
+        existingItem.quantity += quantity;
+      } else {
+        // If the product is not in the cart, add it with the selected quantity
+        cart.push({ ...shoe, quantity });
+      }
+
+      // Save the updated cart back to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Cart Updated:', cart); // Log the updated cart
+
+      // Trigger a custom event to update the cart count in the navbar
+      window.dispatchEvent(new Event('cartUpdated'));
+
+      // Redirect to the cart page
+      router.push('/cart');
+    } catch (err) {
+      console.error('Failed to update cart:', err); // Log the error
+      alert('Failed to add the product to the cart. Please try again.');
     }
-
-    // Save the updated cart back to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-    console.log('Cart Updated:', cart); // Log the updated cart
-
-    // Trigger a custom event to update the cart count in the navbar
-    window.dispatchEvent(new Event('cartUpdated'));
-
-    // Redirect to the cart page
-    router.push('/cart');
   };
 
   if (loading) {
