@@ -4,9 +4,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
+// Define the Shoe interface
+interface Shoe {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  description: string;
+  category: string;
+}
+
 // Function to fetch products
-async function getProducts() {
-  const res = await fetch('http://localhost:3000/api/products'); 
+async function getProducts(): Promise<Shoe[]> {
+  const res = await fetch('http://localhost:3000/api/products');
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }
@@ -14,7 +24,7 @@ async function getProducts() {
 }
 
 export default function ShoesPage() {
-  const [shoes, setShoes] = useState<any[]>([]);
+  const [shoes, setShoes] = useState<Shoe[]>([]); // Use the Shoe interface
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +33,7 @@ export default function ShoesPage() {
     const fetchProducts = async () => {
       try {
         const products = await getProducts();
-        const shoes = products.filter((product: { category: string }) => product.category === 'shoes');
+        const shoes = products.filter((product) => product.category === 'shoes');
         setShoes(shoes);
       } catch (err) {
         setError('Failed to fetch products');
@@ -64,7 +74,7 @@ export default function ShoesPage() {
           <p className="mt-4 text-lg text-gray-600">Explore our premium collection of shoes, designed for style and comfort.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {shoes.map((shoe: any) => (
+          {shoes.map((shoe) => (
             <div key={shoe.id} className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all hover:scale-105 hover:shadow-xl">
               {/* Product Image */}
               <div className="w-full h-64 relative">
@@ -73,6 +83,7 @@ export default function ShoesPage() {
                   alt={shoe.name}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
 
