@@ -4,9 +4,23 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+// Define a type for the product
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  colors: string[];
+  sizes?: string[];  // Optional field, only needed for 'shoes' category
+  category: string;
+}
+
 // Function to fetch product details
-async function getProduct(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, { cache: 'no-store' });
+async function getProduct(id: string): Promise<Product> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const res = await fetch(`${apiUrl}/api/products/${id}`, { cache: 'no-store' });
+  
   if (!res.ok) {
     throw new Error('Failed to fetch product');
   }
@@ -14,7 +28,7 @@ async function getProduct(id: string) {
 }
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);  // Set product state type
   const [quantity, setQuantity] = useState(1);
   const [id, setId] = useState<string | null>(null);
 
@@ -29,7 +43,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     if (id) {
       getProduct(id)
         .then(setProduct)
-        .catch((err) => console.error('Error fetching product:', err));
+        .catch((err) => {
+          console.error('Error fetching product:', err);
+          setProduct(null); // Reset product state if fetch fails
+        });
     }
   }, [id]);
 
@@ -100,7 +117,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
                     <select className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900">
-                      {product.sizes.map((size: string) => (
+                      {product.sizes?.map((size: string) => (
                         <option key={size} value={size}>
                           {size}
                         </option>
