@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { use } from 'react'; // Import the `use` function
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { use } from 'react'; // Import the `use` function
 
+// Define the Bag interface
 interface Bag {
   id: string;
   name: string;
@@ -15,22 +17,21 @@ interface Bag {
 }
 
 // Function to fetch product details
-async function getProduct(id: string) {
-  const res = await fetch(`http://localhost:3000/api/products/${id}`, { cache: 'no-store' });
+async function getProduct(id: string): Promise<Bag | undefined> {
+  const res = await fetch(`http://localhost:3000/api/products`);
   if (!res.ok) {
     throw new Error('Failed to fetch product');
   }
-  const product = await res.json();
-  // Ensure price is a valid number
-  product.price = product.price || 0; // Default to 0 if price is missing or invalid
-  return product;
+  const products = await res.json();
+  return products.find((product: { id: string; category: string }) => product.id === id && product.category === 'bags');
 }
 
 export default function BagDetails({ params }: { params: Promise<{ id: string }> }) {
-  const [bag, setBag] = useState<Bag | null>(null);
+  const [bag, setBag] = useState<Bag | null>(null); // Use the Bag interface
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Unwrap the params object using `use`
   const { id } = use(params);
@@ -43,12 +44,11 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
         if (!product) {
           setError('Product not found');
         } else {
-          console.log('Fetched product:', product); // Log the product object
           setBag(product);
         }
       } catch (err) {
+        console.error('Failed to fetch product details:', err); // Log the error
         setError('Failed to fetch product details');
-        console.error('Error fetching product details:', err);  // Log the error to the console
       } finally {
         setLoading(false);
       }
@@ -82,10 +82,10 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
       // Trigger a custom event to update the cart count in the navbar
       window.dispatchEvent(new Event('cartUpdated'));
 
-      // Show a success message
-      alert(`${bag.name} added to cart!`);
+      // Redirect to the cart page
+      router.push('/cart');
     } catch (err) {
-      console.error('Failed to update cart:', err);
+      console.error('Failed to update cart:', err); // Log the error
       alert('Failed to add the product to the cart. Please try again.');
     }
   };

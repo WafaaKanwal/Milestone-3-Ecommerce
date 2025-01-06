@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 interface Product {
   id: string;
-  imageUrl: string | StaticImport;
+  imageUrl: string;
   name: string;
   price: number;
   description: string;
   category: string;
 }
 
+// Fetching data directly inside the component
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch('http://localhost:3000/api/products'); // Adjust the URL if needed
+  const res = await fetch('http://localhost:3000/api/products'); 
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }
@@ -20,6 +20,7 @@ async function getProducts(): Promise<Product[]> {
 }
 
 export default async function BagsPage() {
+  // Fetch the products when the page loads
   const products = await getProducts();
   const bags = products.filter((product) => product.category === 'bags');
 
