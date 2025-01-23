@@ -17,13 +17,14 @@ interface Bag {
 
 // Function to fetch product details
 async function getProduct(id: string): Promise<Bag | undefined> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+  const res = await fetch(`http://localhost:3000/api/products`);
   if (!res.ok) {
     throw new Error('Failed to fetch product');
   }
   const products = await res.json();
   return products.find((product: { id: string; category: string }) => product.id === id && product.category === 'bags');
 }
+
 
 export default function BagDetails({ params }: { params: Promise<{ id: string }> }) {
   const [bag, setBag] = useState<Bag | null>(null); // Use the Bag interface
@@ -36,19 +37,15 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
   const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchId = async () => {
-      const paramsData = await params;
-      setId(paramsData.id);
-    };
-    fetchId();
+    params.then((resolvedParams) => {
+      setId(resolvedParams.id);
+    });
   }, [params]);
 
-  // Fetch product details
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (id) {
+   useEffect(() => {
+      const fetchProduct = async () => {
         try {
-          const product = await getProduct(id);
+          const product = await getProduct(id as string);
           if (!product) {
             setError('Product not found');
           } else {
@@ -60,9 +57,8 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
         } finally {
           setLoading(false);
         }
-      }
-    };
-
+      };
+  
     if (id) {
       fetchProduct();
     }
