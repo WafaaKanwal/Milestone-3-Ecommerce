@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { use } from 'react'; // Import the `use` function
 
 // Define the Bag interface
 interface Bag {
@@ -18,7 +17,7 @@ interface Bag {
 
 // Function to fetch product details
 async function getProduct(id: string): Promise<Bag | undefined> {
-  const res = await fetch(`http://localhost:3000/api/products`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
   if (!res.ok) {
     throw new Error('Failed to fetch product');
   }
@@ -33,29 +32,41 @@ export default function BagDetails({ params }: { params: Promise<{ id: string }>
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Unwrap the params object using `use`
-  const { id } = use(params);
+  // Get the id from params
+  const [id, setId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchId = async () => {
+      const paramsData = await params;
+      setId(paramsData.id);
+    };
+    fetchId();
+  }, [params]);
 
   // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
-      try {
-        const product = await getProduct(id);
-        if (!product) {
-          setError('Product not found');
-        } else {
-          setBag(product);
+      if (id) {
+        try {
+          const product = await getProduct(id);
+          if (!product) {
+            setError('Product not found');
+          } else {
+            setBag(product);
+          }
+        } catch (err) {
+          console.error('Failed to fetch product details:', err); // Log the error
+          setError('Failed to fetch product details');
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error('Failed to fetch product details:', err); // Log the error
-        setError('Failed to fetch product details');
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchProduct();
-  }, [id]); // Use `id` directly instead of `params.id`
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]); // Use `id` directly
 
   const addToCart = () => {
     if (!bag) return; // Ensure the product is available
