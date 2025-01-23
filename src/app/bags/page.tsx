@@ -10,9 +10,9 @@ interface Product {
   category: string;
 }
 
-// Fetching data directly inside the component
+// Fetching data directly inside the component (for server-side rendering in app directory)
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch('http://localhost:3000/api/products'); 
+  const res = await fetch('/api/products'); // Ensure this is correct
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }
