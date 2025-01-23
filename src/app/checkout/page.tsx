@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
@@ -12,7 +12,7 @@ interface CartItem {
   imageUrl: string;
 }
 
-export default function CheckoutPage() {
+const CheckoutPage = () => {
   const searchParams = useSearchParams();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -196,5 +196,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutPage />
+    </Suspense>
   );
 }
