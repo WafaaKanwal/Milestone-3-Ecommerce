@@ -16,7 +16,7 @@ interface Shoe {
 
 // Function to fetch products
 async function getProducts(): Promise<Shoe[]> {
-  const res = await fetch('http://localhost:3000/api/products');
+  const res = await fetch('https://678548251ec630ca33a7fc66.mockapi.io/products');
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }

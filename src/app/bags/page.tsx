@@ -12,7 +12,7 @@ interface Product {
 
 // Fetching data directly inside the component (for server-side rendering in app directory)
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch('http://localhost:3000/api/products'); // Ensure this is correct
+  const res = await fetch('https://678548251ec630ca33a7fc66.mockapi.io/products'); // Ensure this is correct
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }
